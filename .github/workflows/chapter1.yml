@@ -1,21 +1,42 @@
-name: CI
+name: CI — chapter1
 
 on:
   push:
+    paths:
+      - "chapter1/**"
+      - ".github/workflows/**"
   pull_request:
+    paths:
+      - "chapter1/**"
+      - ".github/workflows/**"
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: chapter1   # <— run steps inside chapter1/
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'        # speed up installs
+          python-version: "3.12"
+          cache: "pip"
+          # cache key will include this file; path is from repo root
+          cache-dependency-path: "chapter1/requirements.txt"
+
+      # (Optional) quick visibility when debugging
+      - name: Show workspace
+        run: |
+          pwd
+          ls -la
 
       - name: Install dependencies
         run: make install
